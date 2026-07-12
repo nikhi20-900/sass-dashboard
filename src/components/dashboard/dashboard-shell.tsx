@@ -1,28 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Activity,
   ArrowDown,
   ArrowUp,
-  BarChart3,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   Home,
-  LayoutDashboard,
   LogOut,
   MoreHorizontal,
   Search,
   Settings,
   Trash2,
-  Users,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import type { Role } from "@prisma/client";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -81,6 +78,18 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { recentSignups, stats, type Signup } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { getRoleLabel } from "@/lib/permissions/rbac";
+import { getGroupedNavigationForRole } from "@/lib/permissions/navigation";
+import { logoutUser } from "@/lib/actions/auth";
+
+interface DashboardUser {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  organizationId: string | null;
+  workspaceId: string | null;
+}
 
 type SortKey = keyof Pick<
   Signup,
@@ -99,15 +108,6 @@ const profileSchema = z.object({
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
-
-const sidebarItems = [
-  { title: "Overview", icon: LayoutDashboard, active: true },
-  { title: "Analytics", icon: BarChart3 },
-  { title: "Customers", icon: Users },
-  { title: "Alerts", icon: Bell },
-  { title: "Billing", icon: CreditCard },
-  { title: "Settings", icon: Settings },
-];
 
 function statusVariant(status: Signup["status"]) {
   if (status === "Active") return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
@@ -147,7 +147,19 @@ function SortButton({
   );
 }
 
-function DashboardSidebar() {
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function DashboardSidebar({ user }: { user: DashboardUser }) {
+  const pathname = usePathname();
+  const { workspace, admin } = getGroupedNavigationForRole(user.role);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -170,30 +182,59 @@ function DashboardSidebar() {
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {sidebarItems.map((item) => (
+              {workspace.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton isActive={item.active} tooltip={item.title}>
-                    <item.icon />
-                    <span>{item.title}</span>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === item.href}
+                    tooltip={item.title}
+                  >
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {admin.length > 0 ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {admin.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === item.href}
+                      tooltip={item.title}
+                    >
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : null}
       </SidebarContent>
       <SidebarFooter>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size="lg" className="w-full">
               <Avatar className="size-8 rounded-lg">
-                <AvatarImage src="https://avatar.vercel.sh/pulse.png" alt="Nikhil" />
-                <AvatarFallback className="rounded-lg">NC</AvatarFallback>
+                <AvatarImage src={`https://avatar.vercel.sh/${user.email}`} alt={user.name} />
+                <AvatarFallback className="rounded-lg">{getInitials(user.name)}</AvatarFallback>
               </Avatar>
               <span className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Nikhil Chhetri</span>
+                <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs text-muted-foreground">
-                  Admin
+                  {getRoleLabel(user.role)}
                 </span>
               </span>
               <ChevronsUpDown className="size-4" />
@@ -206,7 +247,12 @@ function DashboardSidebar() {
               <Settings className="size-4" />
               Preferences
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                logoutUser();
+              }}
+            >
               <LogOut className="size-4" />
               Sign out
             </DropdownMenuItem>
@@ -422,12 +468,12 @@ function SignupsTable() {
   );
 }
 
-function SettingsTabs() {
+function SettingsTabs({ user }: { user: DashboardUser }) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: "Nikhil Chhetri",
-      email: "nikhil@pulse.demo",
+      name: user.name,
+      email: user.email,
       company: "Pulse Analytics",
     },
   });
@@ -455,22 +501,22 @@ function SettingsTabs() {
           <TabsContent value="profile" className="mt-0">
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid max-w-xl gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" {...form.register("name")} aria-invalid={Boolean(form.formState.errors.name)} />
+                <Label htmlFor="profile-name">Name</Label>
+                <Input id="profile-name" {...form.register("name")} aria-invalid={Boolean(form.formState.errors.name)} />
                 {form.formState.errors.name ? (
                   <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>
                 ) : null}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" {...form.register("email")} aria-invalid={Boolean(form.formState.errors.email)} />
+                <Label htmlFor="profile-email">Email</Label>
+                <Input id="profile-email" type="email" {...form.register("email")} aria-invalid={Boolean(form.formState.errors.email)} />
                 {form.formState.errors.email ? (
                   <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
                 ) : null}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="company">Company</Label>
-                <Input id="company" {...form.register("company")} aria-invalid={Boolean(form.formState.errors.company)} />
+                <Label htmlFor="profile-company">Company</Label>
+                <Input id="profile-company" {...form.register("company")} aria-invalid={Boolean(form.formState.errors.company)} />
                 {form.formState.errors.company ? (
                   <p className="text-sm text-destructive">{form.formState.errors.company.message}</p>
                 ) : null}
@@ -492,10 +538,48 @@ function SettingsTabs() {
   );
 }
 
-export function DashboardShell() {
+function DashboardContent({ user }: { user: DashboardUser }) {
+  const firstName = user.name.split(" ")[0];
+
+  return (
+    <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6">
+      <div className="grid gap-2">
+        <Badge variant="outline" className="w-fit gap-1 border-emerald-500/40 text-emerald-700 dark:text-emerald-300">
+          <Activity className="size-3" />
+          Live workspace
+        </Badge>
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Welcome back, {firstName}.
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {getRoleLabel(user.role)}
+          </p>
+          <p className="mt-2 text-muted-foreground">
+            Your acquisition funnel is healthy, with revenue growth ahead of active sessions.
+          </p>
+        </div>
+      </div>
+      <StatCards />
+      <SignupsTable />
+      <SettingsTabs user={user} />
+    </div>
+  );
+}
+
+export function DashboardShell({
+  user,
+  children,
+}: {
+  user: DashboardUser;
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const isDashboardOverview = pathname === "/dashboard";
+
   return (
     <SidebarProvider>
-      <DashboardSidebar />
+      <DashboardSidebar user={user} />
       <SidebarInset>
         <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b bg-background/85 px-4 backdrop-blur-xl sm:px-6">
           <SidebarTrigger />
@@ -510,25 +594,7 @@ export function DashboardShell() {
           </div>
           <ThemeToggle />
         </header>
-        <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6">
-          <div className="grid gap-2">
-            <Badge variant="outline" className="w-fit gap-1 border-emerald-500/40 text-emerald-700 dark:text-emerald-300">
-              <Activity className="size-3" />
-              Live workspace
-            </Badge>
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                Good afternoon, Nikhil.
-              </h2>
-              <p className="mt-2 text-muted-foreground">
-                Your acquisition funnel is healthy, with revenue growth ahead of active sessions.
-              </p>
-            </div>
-          </div>
-          <StatCards />
-          <SignupsTable />
-          <SettingsTabs />
-        </div>
+        {isDashboardOverview ? <DashboardContent user={user} /> : children}
       </SidebarInset>
     </SidebarProvider>
   );

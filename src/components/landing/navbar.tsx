@@ -2,8 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Menu } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { LogOut, Menu, Settings, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -13,6 +23,7 @@ import {
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
+import { logoutUser } from "@/lib/actions/auth";
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -32,8 +43,63 @@ function PulseLogo() {
   );
 }
 
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function UserMenu({ name, email }: { name: string; email: string }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <Avatar className="size-8">
+            <AvatarImage src={`https://avatar.vercel.sh/${email}`} alt={name} />
+            <AvatarFallback>{getInitials(name)}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-medium">{name}</span>
+            <span className="text-xs text-muted-foreground">{email}</span>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard">
+            <User className="size-4" />
+            Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard">
+            <Settings className="size-4" />
+            Settings
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => {
+            logoutUser();
+          }}
+        >
+          <LogOut className="size-4" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -41,6 +107,8 @@ export function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const isAuthenticated = status === "authenticated" && session?.user;
 
   return (
     <header
@@ -66,12 +134,30 @@ export function Navbar() {
         </nav>
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
-          <Button asChild>
-            <Link href="/dashboard">Open dashboard</Link>
-          </Button>
+          {isAuthenticated ? (
+            <UserMenu
+              name={session.user.name ?? "User"}
+              email={session.user.email ?? ""}
+            />
+          ) : (
+            <>
+              <Button asChild variant="ghost">
+                <Link href="/login">Sign in</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/register">Get started</Link>
+              </Button>
+            </>
+          )}
         </div>
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
+          {isAuthenticated ? (
+            <UserMenu
+              name={session.user.name ?? "User"}
+              email={session.user.email ?? ""}
+            />
+          ) : null}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
@@ -93,9 +179,20 @@ export function Navbar() {
                     <Link href={item.href}>{item.label}</Link>
                   </Button>
                 ))}
-                <Button asChild className="mt-2">
-                  <Link href="/dashboard">Open dashboard</Link>
-                </Button>
+                {isAuthenticated ? (
+                  <Button asChild className="mt-2">
+                    <Link href="/dashboard">Open dashboard</Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button asChild variant="ghost" className="mt-2">
+                      <Link href="/login">Sign in</Link>
+                    </Button>
+                    <Button asChild>
+                      <Link href="/register">Get started</Link>
+                    </Button>
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
