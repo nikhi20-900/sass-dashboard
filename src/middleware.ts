@@ -45,6 +45,15 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  // Custom API routes — require authentication
+  // (NextAuth API routes at /api/auth are excluded by the matcher below)
+  if (pathname.startsWith("/api")) {
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
   return NextResponse.next();
 });
 

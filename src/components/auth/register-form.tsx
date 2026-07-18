@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -27,8 +27,12 @@ export function RegisterForm() {
     FormData
   >(registerUser, undefined);
 
+  const formRef = useRef<HTMLFormElement>(null);
+  const isValidatedRef = useRef(false);
+
   const {
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -49,7 +53,23 @@ export function RegisterForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="grid gap-4">
+        <form
+          ref={formRef}
+          action={formAction}
+          onSubmit={(e) => {
+            if (isValidatedRef.current) {
+              isValidatedRef.current = false;
+              return;
+            }
+
+            e.preventDefault();
+            handleSubmit(() => {
+              isValidatedRef.current = true;
+              formRef.current?.requestSubmit();
+            })();
+          }}
+          className="grid gap-4"
+        >
           {state?.error ? (
             <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               {state.error}

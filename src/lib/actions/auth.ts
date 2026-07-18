@@ -2,6 +2,7 @@
 
 import bcryptjs from "bcryptjs";
 import { AuthError } from "next-auth";
+import { Prisma } from "@prisma/client";
 import { signIn, signOut } from "@/lib/auth";
 import { prisma } from "@/lib/db/prisma";
 import { loginSchema, registerSchema } from "@/lib/validators/auth";
@@ -42,16 +43,28 @@ export async function registerUser(
 
   const passwordHash = await bcryptjs.hash(password, 10);
 
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      passwordHash,
-      role: "VIEWER",
-      organizationId: null,
-      workspaceId: null,
-    },
-  });
+  try {
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        passwordHash,
+        role: "VIEWER",
+        organizationId: null,
+        workspaceId: null,
+      },
+    });
+  } catch (error) {
+    // Handle race condition: another request created the same email
+    // between findUnique and create
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return { error: "Email already exists" };
+    }
+    throw error;
+  }
 
   try {
     await signIn("credentials", {

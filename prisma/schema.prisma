@@ -55,5 +55,4 @@ model User {
 
   @@index([organizationId])
   @@index([workspaceId])
-  @@index([email])
 }

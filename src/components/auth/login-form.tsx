@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -24,8 +24,12 @@ export function LoginForm() {
     FormData
   >(loginUser, undefined);
 
+  const formRef = useRef<HTMLFormElement>(null);
+  const isValidatedRef = useRef(false);
+
   const {
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -44,7 +48,27 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="grid gap-4">
+        <form
+          ref={formRef}
+          action={formAction}
+          onSubmit={(e) => {
+            // If validation already passed, allow native form submission
+            // to proceed with the Server Action (via the action attribute).
+            if (isValidatedRef.current) {
+              isValidatedRef.current = false;
+              return; // Don't prevent default — let the action fire
+            }
+
+            // First submit: intercept and validate via react-hook-form
+            e.preventDefault();
+            handleSubmit(() => {
+              // Validation passed — mark and re-submit natively
+              isValidatedRef.current = true;
+              formRef.current?.requestSubmit();
+            })();
+          }}
+          className="grid gap-4"
+        >
           {state?.error ? (
             <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               {state.error}
