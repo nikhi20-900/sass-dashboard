@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+export const metadata: Metadata = { title: "Analytics", description: "View analytics insights and trends." };
 
 export default function AnalyticsPage() {
   return (

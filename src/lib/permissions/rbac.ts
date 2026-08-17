@@ -1,4 +1,11 @@
-import { Role } from "@prisma/client";
+export const Role = {
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ORG_ADMIN: "ORG_ADMIN",
+  MANAGER: "MANAGER",
+  VIEWER: "VIEWER",
+} as const;
+
+export type Role = (typeof Role)[keyof typeof Role];
 
 /**
  * Permissions represent granular access controls.
@@ -61,7 +68,7 @@ export const ADMIN_PERMISSIONS: Permission[] = [
 
 /** Check if a role has a specific permission. */
 export function hasPermission(role: Role, permission: Permission): boolean {
-  return ROLE_PERMISSIONS[role].includes(permission);
+  return ROLE_PERMISSIONS[role]?.includes(permission) ?? false;
 }
 
 /** Check if a role has at least one of the given permissions. */

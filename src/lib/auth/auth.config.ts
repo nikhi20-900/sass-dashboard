@@ -1,5 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
-import type { Role } from "@prisma/client";
+import type { Role } from "@/lib/permissions/rbac";
 import Credentials from "next-auth/providers/credentials";
 
 /**

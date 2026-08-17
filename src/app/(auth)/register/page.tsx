@@ -3,7 +3,8 @@ import { RegisterForm } from "@/components/auth/register-form";
 
 export const metadata: Metadata = {
   title: "Create account | Pulse",
-  description: "Create a new Pulse Analytics account.",
+  description: "Create your Pulse Analytics account.",
+  robots: { index: false, follow: false },
 };
 
 export default function RegisterPage() {

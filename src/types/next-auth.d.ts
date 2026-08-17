@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import type { Role } from "@/lib/permissions/rbac";
 
 declare module "next-auth" {
   interface User {

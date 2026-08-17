@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+export const metadata: Metadata = { title: "Reports", description: "Generate and view analytics reports." };
 
 export default function ReportsPage() {
   return (

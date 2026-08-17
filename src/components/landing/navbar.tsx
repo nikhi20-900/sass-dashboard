@@ -22,8 +22,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn, getInitials } from "@/lib/utils";
 import { logoutUser } from "@/lib/actions/auth";
+import { PulseLogo } from "@/components/pulse-logo";
 
 const navItems = [
   { label: "Features", href: "#features" },
@@ -32,25 +34,6 @@ const navItems = [
   { label: "Dashboard", href: "/dashboard" },
 ];
 
-function PulseLogo() {
-  return (
-    <Link href="/" className="flex items-center gap-2" aria-label="Pulse home">
-      <span className="grid size-8 place-items-center rounded-lg bg-emerald-500 text-sm font-semibold text-white shadow-sm shadow-emerald-500/25">
-        P
-      </span>
-      <span className="text-base font-semibold tracking-tight">Pulse</span>
-    </Link>
-  );
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
 
 function UserMenu({ name, email }: { name: string; email: string }) {
   return (
@@ -108,6 +91,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const isLoading = status === "loading";
   const isAuthenticated = status === "authenticated" && session?.user;
 
   return (
@@ -120,7 +104,7 @@ export function Navbar() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <PulseLogo />
+        <PulseLogo href="/" size="sm" />
         <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
           {navItems.map((item) => (
             <Link
@@ -134,7 +118,9 @@ export function Navbar() {
         </nav>
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
-          {isAuthenticated ? (
+          {isLoading ? (
+            <Skeleton className="h-8 w-8 rounded-full" />
+          ) : isAuthenticated ? (
             <UserMenu
               name={session.user.name ?? "User"}
               email={session.user.email ?? ""}
@@ -152,7 +138,9 @@ export function Navbar() {
         </div>
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
-          {isAuthenticated ? (
+          {isLoading ? (
+            <Skeleton className="h-8 w-8 rounded-full" />
+          ) : isAuthenticated ? (
             <UserMenu
               name={session.user.name ?? "User"}
               email={session.user.email ?? ""}

@@ -1,8 +1,7 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import { authConfig } from "@/lib/auth/auth.config";
-import { hasAnyPermission, ADMIN_PERMISSIONS } from "@/lib/permissions/rbac";
-import type { Role } from "@prisma/client";
+import { hasAnyPermission, ADMIN_PERMISSIONS, type Role } from "@/lib/permissions/rbac";
 
 const { auth } = NextAuth(authConfig);
 

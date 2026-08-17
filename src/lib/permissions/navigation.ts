@@ -8,8 +8,7 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { Role } from "@prisma/client";
-import { hasPermission, Permission } from "@/lib/permissions/rbac";
+import { hasPermission, Permission, type Role } from "@/lib/permissions/rbac";
 
 export interface NavItem {
   title: string;

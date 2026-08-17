@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Settings } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+export const metadata: Metadata = { title: "Organization Settings", description: "Configure organization-level settings." };
 
 export default function OrgSettingsPage() {
   return (

@@ -221,9 +221,9 @@ export function LandingPage() {
               <p className="font-medium">{title}</p>
               <div className="mt-4 grid gap-3 text-sm text-muted-foreground">
                 {links.map((link) => (
-                  <Link key={link} href="#" className="hover:text-foreground">
+                  <span key={link} className="cursor-default hover:text-foreground">
                     {link}
-                  </Link>
+                  </span>
                 ))}
               </div>
             </div>

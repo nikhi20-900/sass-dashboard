@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -7,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+export const metadata: Metadata = { title: "Billing", description: "Manage billing and subscription settings." };
 
 export default function BillingPage() {
   return (
