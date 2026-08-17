@@ -46,6 +46,12 @@ export interface Signup {
   revenue: number;
 }
 
+export interface RevenuePoint {
+  month: string;
+  revenue: number;
+  target?: number;
+}
+
 export const features: Feature[] = [
   {
     title: "Live revenue pulse",
@@ -151,3 +157,19 @@ export const recentSignups: Signup[] = [
   { id: "SGN-1014", name: "Henry Clark", email: "henry@novagrid.dev", company: "NovaGrid", plan: "Starter", status: "Trial", joined: "2026-07-03", revenue: 290 },
   { id: "SGN-1015", name: "Charlotte King", email: "charlotte@upliftdata.com", company: "Uplift Data", plan: "Scale", status: "Active", joined: "2026-07-02", revenue: 1890 },
 ];
+
+export const revenueOverTime: RevenuePoint[] = [
+  { month: "Aug 2025", revenue: 68200, target: 65000 },
+  { month: "Sep 2025", revenue: 72500, target: 70000 },
+  { month: "Oct 2025", revenue: 76800, target: 75000 },
+  { month: "Nov 2025", revenue: 81400, target: 80000 },
+  { month: "Dec 2025", revenue: 89100, target: 85000 },
+  { month: "Jan 2026", revenue: 86400, target: 88000 },
+  { month: "Feb 2026", revenue: 92300, target: 90000 },
+  { month: "Mar 2026", revenue: 98700, target: 95000 },
+  { month: "Apr 2026", revenue: 104200, target: 100000 },
+  { month: "May 2026", revenue: 109600, target: 106000 },
+  { month: "Jun 2026", revenue: 113830, target: 112000 },
+  { month: "Jul 2026", revenue: 128400, target: 120000 },
+];
+

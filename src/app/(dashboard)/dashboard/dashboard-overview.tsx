@@ -3,6 +3,7 @@
 import { Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { StatCards } from "@/components/dashboard/stat-cards";
+import { RevenueChart } from "@/components/dashboard/revenue-chart";
 import { SignupsTable } from "@/components/dashboard/signups-table";
 import { SettingsTabs } from "@/components/dashboard/settings-tabs";
 import { getRoleLabel, type Role } from "@/lib/permissions/rbac";
@@ -43,6 +44,7 @@ export function DashboardOverview({
         </div>
       </div>
       <StatCards />
+      <RevenueChart />
       <SignupsTable />
       <SettingsTabs user={{ name: userName, email: userEmail }} />
     </div>

@@ -187,7 +187,7 @@ export function RegisterForm() {
 
           <Button
             type="submit"
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm transition-all mt-2"
+            className="w-full font-medium shadow-sm transition-all mt-2"
             disabled={isPending}
           >
             {isPending ? (
@@ -208,7 +208,7 @@ export function RegisterForm() {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline underline-offset-4"
+            className="font-semibold text-foreground underline underline-offset-4 hover:text-primary"
           >
             Sign in
           </Link>

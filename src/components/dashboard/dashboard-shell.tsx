@@ -40,6 +40,7 @@ import { getInitials } from "@/lib/utils";
 import { getRoleLabel, type Role } from "@/lib/permissions/rbac";
 import { getGroupedNavigationForRole } from "@/lib/permissions/navigation";
 import { logoutUser } from "@/lib/actions/auth";
+import { PulseLogo } from "@/components/pulse-logo";
 
 export interface DashboardUser {
   id: string;
@@ -61,9 +62,7 @@ function DashboardSidebar({ user }: { user: DashboardUser }) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild size="lg" tooltip="Pulse">
               <Link href="/">
-                <span className="grid size-8 place-items-center rounded-lg bg-emerald-500 text-sm font-semibold text-white">
-                  P
-                </span>
+                <PulseLogo size="sm" showText={false} />
                 <span className="font-semibold">Pulse</span>
               </Link>
             </SidebarMenuButton>

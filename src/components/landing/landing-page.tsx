@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Navbar } from "@/components/landing/navbar";
 import { PricingTabs } from "@/components/landing/pricing-tabs";
+import { PulseLogo } from "@/components/pulse-logo";
 import { faqs, features } from "@/lib/data";
 
 export function LandingPage() {
@@ -202,12 +203,7 @@ export function LandingPage() {
       <footer className="py-12">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 md:grid-cols-4 lg:px-8">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="grid size-8 place-items-center rounded-lg bg-emerald-500 text-sm font-semibold text-white">
-                P
-              </span>
-              <span className="font-semibold">Pulse</span>
-            </div>
+            <PulseLogo size="sm" />
             <p className="mt-4 text-sm text-muted-foreground">
               Fictional analytics for focused growth teams.
             </p>

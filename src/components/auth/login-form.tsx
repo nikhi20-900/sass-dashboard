@@ -87,7 +87,7 @@ export function LoginForm() {
         <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
-              <Sparkles className="size-3.5 text-emerald-500" />
+              <Sparkles className="size-3.5 text-primary" />
               Quick Demo Accounts
             </span>
             <span className="text-[11px] text-muted-foreground font-mono">password123</span>
@@ -102,8 +102,8 @@ export function LoginForm() {
                   onClick={() => handleFillDemo(acc)}
                   className={`flex flex-col items-start p-2 rounded-md border text-left transition-all cursor-pointer ${
                     isSelected
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 shadow-sm"
-                      : "border-border/60 bg-background hover:border-emerald-500/50 hover:bg-accent/50 text-foreground"
+                      ? "border-primary bg-primary/10 text-foreground shadow-sm"
+                      : "border-border/60 bg-background hover:border-primary/50 hover:bg-accent/50 text-foreground"
                   }`}
                 >
                   <span className="text-xs font-semibold leading-tight">{acc.role}</span>
@@ -165,7 +165,7 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => handleFillDemo(DEMO_ACCOUNTS[0])}
-                className="text-xs text-muted-foreground hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                className="text-xs text-muted-foreground hover:text-foreground transition"
               >
                 Use demo admin
               </button>
@@ -209,18 +209,18 @@ export function LoginForm() {
                 id="remember"
                 name="remember"
                 defaultChecked
-                className="size-4 rounded border-input text-emerald-600 focus:ring-emerald-500"
+                className="size-4 rounded border-input text-foreground focus:ring-ring"
               />
               <Label htmlFor="remember" className="text-xs text-muted-foreground cursor-pointer font-normal">
                 Remember me
               </Label>
             </div>
-            <span className="text-xs text-muted-foreground">Demo pw: <code className="font-mono text-emerald-600 dark:text-emerald-400">password123</code></span>
+            <span className="text-xs text-muted-foreground">Demo pw: <code className="font-mono text-foreground">password123</code></span>
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm transition-all"
+            className="w-full font-medium shadow-sm transition-all"
             disabled={isPending}
           >
             {isPending ? (
@@ -241,7 +241,7 @@ export function LoginForm() {
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline underline-offset-4"
+            className="font-semibold text-foreground underline underline-offset-4 hover:text-primary"
           >
             Create account
           </Link>
