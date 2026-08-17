@@ -2,9 +2,12 @@ import {
   Activity,
   BarChart3,
   BellRing,
+  DollarSign,
   Globe2,
   LineChart,
+  Percent,
   ShieldCheck,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,11 +31,22 @@ export interface FaqItem {
   answer: string;
 }
 
+export type KPITrend = {
+  value: number;
+  direction: "up" | "down";
+  comparison: string;
+};
+
 export interface StatCard {
   label: string;
   value: string;
-  trend: string;
-  positive: boolean;
+  trend: KPITrend;
+  icon: LucideIcon;
+}
+
+export interface KPISnapshot {
+  current: number;
+  previous: number;
 }
 
 export interface Signup {
@@ -133,12 +147,57 @@ export const faqs: FaqItem[] = [
   },
 ];
 
-export const stats: StatCard[] = [
-  { label: "Revenue", value: "$128.4K", trend: "+12.8% vs last month", positive: true },
-  { label: "Users", value: "24,982", trend: "+8.2% new accounts", positive: true },
-  { label: "Conversion", value: "7.46%", trend: "+1.1 pts this week", positive: true },
-  { label: "Active sessions", value: "1,482", trend: "-3.4% from yesterday", positive: false },
-];
+const KPI_COMPARISON = "vs previous period";
+
+function percentChange(current: number, previous: number): number {
+  if (previous === 0) {
+    return current === 0 ? 0 : 100;
+  }
+  return ((current - previous) / previous) * 100;
+}
+
+export function buildKPITrend(
+  current: number,
+  previous: number,
+  comparison = KPI_COMPARISON
+): KPITrend {
+  const change = Number(percentChange(current, previous).toFixed(1));
+
+  return {
+    value: Math.abs(change),
+    direction: change >= 0 ? "up" : "down",
+    comparison,
+  };
+}
+
+function formatCompactCurrency(value: number): string {
+  if (value >= 1_000_000) {
+    return `$${(value / 1_000_000).toFixed(2)}M`;
+  }
+  if (value >= 1_000) {
+    return `$${(value / 1_000).toFixed(1)}K`;
+  }
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function formatCount(value: number): string {
+  return new Intl.NumberFormat("en-US").format(value);
+}
+
+function formatRate(value: number): string {
+  return `${value.toFixed(2)}%`;
+}
+
+/** Period snapshots for Users, Conversion Rate, and Active Sessions. */
+export const kpiSnapshots = {
+  users: { current: 24_982, previous: 23_088 },
+  conversionRate: { current: 7.46, previous: 7.38 },
+  activeSessions: { current: 1_482, previous: 1_534 },
+} as const satisfies Record<string, KPISnapshot>;
 
 export const recentSignups: Signup[] = [
   { id: "SGN-1001", name: "Maya Patel", email: "maya@northstar.io", company: "Northstar", plan: "Growth", status: "Active", joined: "2026-07-10", revenue: 790 },
@@ -172,4 +231,129 @@ export const revenueOverTime: RevenuePoint[] = [
   { month: "Jun 2026", revenue: 113830, target: 112000 },
   { month: "Jul 2026", revenue: 128400, target: 120000 },
 ];
+
+const latestRevenue = revenueOverTime[revenueOverTime.length - 1]?.revenue ?? 0;
+const previousRevenue = revenueOverTime[revenueOverTime.length - 2]?.revenue ?? latestRevenue;
+
+export const stats: StatCard[] = [
+  {
+    label: "Revenue",
+    value: formatCompactCurrency(latestRevenue),
+    trend: buildKPITrend(latestRevenue, previousRevenue),
+    icon: DollarSign,
+  },
+  {
+    label: "Users",
+    value: formatCount(kpiSnapshots.users.current),
+    trend: buildKPITrend(kpiSnapshots.users.current, kpiSnapshots.users.previous),
+    icon: Users,
+  },
+  {
+    label: "Conversion Rate",
+    value: formatRate(kpiSnapshots.conversionRate.current),
+    trend: buildKPITrend(
+      kpiSnapshots.conversionRate.current,
+      kpiSnapshots.conversionRate.previous
+    ),
+    icon: Percent,
+  },
+  {
+    label: "Active Sessions",
+    value: formatCount(kpiSnapshots.activeSessions.current),
+    trend: buildKPITrend(
+      kpiSnapshots.activeSessions.current,
+      kpiSnapshots.activeSessions.previous
+    ),
+    icon: Activity,
+  },
+];
+
+const SHORT_MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
+
+/** Weekend-softer weekday mix for billed revenue (Sun…Sat). */
+const WEEKDAY_WEIGHT = [0.82, 1.08, 1.12, 1.1, 1.08, 1.05, 0.75] as const;
+
+function mulberry32(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state += 0x6d2b79f5;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function dailySeriesForMonth(
+  year: number,
+  monthIndex: number,
+  monthlyRevenue: number,
+  monthlyTarget: number,
+  seed: number,
+): RevenuePoint[] {
+  const days = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+  const rand = mulberry32(seed);
+  const weights: number[] = [];
+
+  for (let day = 1; day <= days; day += 1) {
+    const weekday = new Date(Date.UTC(year, monthIndex, day)).getUTCDay();
+    const noise = 0.94 + rand() * 0.12;
+    weights.push(WEEKDAY_WEIGHT[weekday] * noise);
+  }
+
+  const weightSum = weights.reduce((sum, weight) => sum + weight, 0);
+  const dailyTarget = Math.round(monthlyTarget / days);
+  const points: RevenuePoint[] = [];
+  let allocated = 0;
+
+  for (let i = 0; i < days; i += 1) {
+    const isLast = i === days - 1;
+    const revenue = isLast
+      ? monthlyRevenue - allocated
+      : Math.max(0, Math.round((monthlyRevenue * weights[i]) / weightSum));
+    allocated += revenue;
+    points.push({
+      month: `${SHORT_MONTHS[monthIndex]} ${i + 1}`,
+      revenue,
+      target: dailyTarget,
+    });
+  }
+
+  return points;
+}
+
+function monthlyPoint(label: string): RevenuePoint & { target: number } {
+  const point = revenueOverTime.find((entry) => entry.month === label);
+  if (!point || point.target === undefined) {
+    throw new Error(`Expected monthly revenue with target for ${label}`);
+  }
+  return { month: point.month, revenue: point.revenue, target: point.target };
+}
+
+const may2026 = monthlyPoint("May 2026");
+const jun2026 = monthlyPoint("Jun 2026");
+const jul2026 = monthlyPoint("Jul 2026");
+
+/** Full May–Jul 2026 daily billed revenue (92 days); 90D uses the last 90. */
+const revenueDailyMayThroughJul: RevenuePoint[] = [
+  ...dailySeriesForMonth(2026, 4, may2026.revenue, may2026.target, 202605),
+  ...dailySeriesForMonth(2026, 5, jun2026.revenue, jun2026.target, 202606),
+  ...dailySeriesForMonth(2026, 6, jul2026.revenue, jul2026.target, 202607),
+];
+
+/** Last 90 days ending Jul 31, 2026 (May 3–Jul 31). */
+export const revenueDaily: RevenuePoint[] = revenueDailyMayThroughJul.slice(-90);
 

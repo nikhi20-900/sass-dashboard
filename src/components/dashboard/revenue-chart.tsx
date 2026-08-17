@@ -18,7 +18,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -27,10 +26,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { revenueOverTime, type RevenuePoint } from "@/lib/data";
+import type { RevenuePoint } from "@/lib/data";
+import {
+  DEFAULT_REVENUE_PERIOD,
+  getRevenueForPeriod,
+  type RevenuePeriod,
+} from "@/lib/revenue-period";
 import { cn } from "@/lib/utils";
-
-type TimeRange = "12M" | "6M" | "3M";
+import { RevenuePeriodSelector } from "@/components/dashboard/revenue-period-selector";
 
 function formatCurrency(val: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -126,27 +129,19 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   );
 }
 
-export function RevenueChart({
-  initialData = revenueOverTime,
-}: {
-  initialData?: RevenuePoint[];
-}) {
+export function RevenueChart() {
   const [mounted, setMounted] = useState(false);
-  const [timeRange, setTimeRange] = useState<TimeRange>("12M");
+  const [period, setPeriod] = useState<RevenuePeriod>(DEFAULT_REVENUE_PERIOD);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const filteredData = useMemo(() => {
-    if (timeRange === "3M") return initialData.slice(-3);
-    if (timeRange === "6M") return initialData.slice(-6);
-    return initialData;
-  }, [initialData, timeRange]);
+  const chartData = useMemo(() => getRevenueForPeriod(period), [period]);
 
-  const currentRevenue = initialData[initialData.length - 1]?.revenue ?? 0;
+  const currentRevenue = chartData[chartData.length - 1]?.revenue ?? 0;
   const previousRevenue =
-    initialData[initialData.length - 2]?.revenue ?? currentRevenue;
+    chartData[chartData.length - 2]?.revenue ?? currentRevenue;
   const momGrowth =
     previousRevenue > 0
       ? (((currentRevenue - previousRevenue) / previousRevenue) * 100).toFixed(
@@ -155,13 +150,13 @@ export function RevenueChart({
       : "0.0";
 
   const totalPeriodRevenue = useMemo(
-    () => filteredData.reduce((acc, curr) => acc + curr.revenue, 0),
-    [filteredData]
+    () => chartData.reduce((acc, curr) => acc + curr.revenue, 0),
+    [chartData]
   );
 
   const averageMonthlyRevenue = useMemo(
-    () => (filteredData.length ? totalPeriodRevenue / filteredData.length : 0),
-    [filteredData, totalPeriodRevenue]
+    () => (chartData.length ? totalPeriodRevenue / chartData.length : 0),
+    [chartData, totalPeriodRevenue]
   );
 
   return (
@@ -192,30 +187,13 @@ export function RevenueChart({
               Revenue Over Time
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Monthly recurring revenue trajectory and target attainment.
+              Recurring revenue trajectory and target attainment for {period}.
             </CardDescription>
           </div>
         </div>
 
-        <CardAction className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center rounded-lg border border-border/80 bg-muted/40 p-0.5">
-            {(["3M", "6M", "12M"] as TimeRange[]).map((range) => (
-              <Button
-                key={range}
-                variant={timeRange === range ? "default" : "ghost"}
-                size="sm"
-                className={cn(
-                  "h-7 px-2.5 text-xs font-medium transition-all",
-                  timeRange === range
-                    ? "bg-background text-foreground shadow-xs hover:bg-background"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                onClick={() => setTimeRange(range)}
-              >
-                {range}
-              </Button>
-            ))}
-          </div>
+        <CardAction className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+          <RevenuePeriodSelector value={period} onChange={setPeriod} />
         </CardAction>
       </CardHeader>
 
@@ -240,7 +218,7 @@ export function RevenueChart({
           </div>
           <div>
             <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Monthly Avg
+              {period === "1Y" ? "Monthly Avg" : "Daily Avg"}
             </span>
             <div className="mt-0.5 text-lg font-bold text-foreground sm:text-xl">
               {formatCurrency(averageMonthlyRevenue)}
@@ -267,7 +245,7 @@ export function RevenueChart({
           {mounted ? (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={filteredData}
+                data={chartData}
                 margin={{ top: 12, right: 12, left: -16, bottom: 4 }}
               >
                 <defs>
@@ -310,6 +288,7 @@ export function RevenueChart({
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
+                  minTickGap={period === "7D" ? 8 : 28}
                   stroke="var(--muted-foreground)"
                   fontSize={12}
                 />
