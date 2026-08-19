@@ -199,6 +199,30 @@ export const kpiSnapshots = {
   activeSessions: { current: 1_482, previous: 1_534 },
 } as const satisfies Record<string, KPISnapshot>;
 
+export interface UserGrowthPoint {
+  month: string;
+  users: number;
+}
+
+/**
+ * Monthly registered-user totals. Latest two months match `kpiSnapshots.users`
+ * so the Users KPI and this chart stay aligned.
+ */
+export const userGrowthOverTime: UserGrowthPoint[] = [
+  { month: "Aug 2025", users: 15_240 },
+  { month: "Sep 2025", users: 15_890 },
+  { month: "Oct 2025", users: 16_620 },
+  { month: "Nov 2025", users: 17_410 },
+  { month: "Dec 2025", users: 18_180 },
+  { month: "Jan 2026", users: 18_840 },
+  { month: "Feb 2026", users: 19_620 },
+  { month: "Mar 2026", users: 20_480 },
+  { month: "Apr 2026", users: 21_350 },
+  { month: "May 2026", users: 22_190 },
+  { month: "Jun 2026", users: kpiSnapshots.users.previous },
+  { month: "Jul 2026", users: kpiSnapshots.users.current },
+];
+
 export const recentSignups: Signup[] = [
   { id: "SGN-1001", name: "Maya Patel", email: "maya@northstar.io", company: "Northstar", plan: "Growth", status: "Active", joined: "2026-07-10", revenue: 790 },
   { id: "SGN-1002", name: "Ethan Brooks", email: "ethan@brightlayer.com", company: "Brightlayer", plan: "Starter", status: "Trial", joined: "2026-07-09", revenue: 290 },

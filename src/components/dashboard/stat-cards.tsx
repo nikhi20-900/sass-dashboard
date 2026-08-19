@@ -1,3 +1,4 @@
+import { BarChart3 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -5,7 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { stats, type KPITrend } from "@/lib/data";
+import { stats, type KPITrend, type StatCard } from "@/lib/data";
+import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state";
+import { StatCardsSkeleton } from "@/components/dashboard/dashboard-skeletons";
 
 function formatTrendValue(value: number): string {
   return `${value.toFixed(1)}%`;
@@ -28,10 +31,34 @@ function TrendIndicator({ trend }: { trend: KPITrend }) {
   );
 }
 
-export function StatCards() {
+interface StatCardsProps {
+  items?: StatCard[];
+  isLoading?: boolean;
+}
+
+export function StatCards({ items = stats, isLoading = false }: StatCardsProps) {
+  if (isLoading) {
+    return <StatCardsSkeleton />;
+  }
+
+  if (items.length === 0) {
+    return (
+      <Card className="rounded-lg">
+        <CardContent className="pt-1">
+          <DashboardEmptyState
+            icon={BarChart3}
+            title="No metrics yet"
+            description="KPI values will appear here when data is available."
+            className="min-h-[132px] border-0 py-8"
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {stats.map((stat) => {
+      {items.map((stat) => {
         const Icon = stat.icon;
 
         return (

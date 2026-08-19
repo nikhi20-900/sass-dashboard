@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
   Search,
   Trash2,
+  UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { recentSignups, type Signup } from "@/lib/data";
+import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state";
+import { SignupsTableSkeleton } from "@/components/dashboard/dashboard-skeletons";
 
 type SortKey = keyof Pick<
   Signup,
@@ -95,8 +98,14 @@ function SortButton({
   );
 }
 
-export function SignupsTable() {
-  const [rows, setRows] = useState<Signup[]>(recentSignups);
+export function SignupsTable({
+  data = recentSignups,
+  isLoading = false,
+}: {
+  data?: Signup[];
+  isLoading?: boolean;
+}) {
+  const [rows, setRows] = useState<Signup[]>(data);
   const [query, setQuery] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "joined",
@@ -140,6 +149,13 @@ export function SignupsTable() {
     setPendingDelete(null);
   };
 
+  if (isLoading) {
+    return <SignupsTableSkeleton />;
+  }
+
+  const isDatasetEmpty = rows.length === 0;
+  const isSearchEmpty = !isDatasetEmpty && sortedRows.length === 0;
+
   return (
     <>
       <Card className="rounded-lg">
@@ -150,18 +166,29 @@ export function SignupsTable() {
               Sort, search, and act on the latest 15 mock accounts.
             </CardDescription>
           </div>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search signups..."
-              aria-label="Search signups"
-              className="pl-8"
-            />
-          </div>
+          {isDatasetEmpty ? null : (
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search signups..."
+                aria-label="Search signups"
+                className="pl-8"
+              />
+            </div>
+          )}
         </CardHeader>
         <CardContent className="overflow-x-auto">
+          {isDatasetEmpty ? (
+            <DashboardEmptyState
+              icon={UserPlus}
+              title="No signups yet"
+              description="New accounts will appear here as they join this workspace."
+              action={{ href: "/dashboard", label: "Explore Dashboard" }}
+              className="min-h-[280px] border-0"
+            />
+          ) : (
           <Table>
             <TableHeader>
               <TableRow>
@@ -233,7 +260,7 @@ export function SignupsTable() {
                   </TableCell>
                 </TableRow>
               ))}
-              {sortedRows.length === 0 ? (
+              {isSearchEmpty ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                     No signups match your search.
@@ -242,6 +269,7 @@ export function SignupsTable() {
               ) : null}
             </TableBody>
           </Table>
+          )}
         </CardContent>
       </Card>
 

@@ -13,7 +13,7 @@ import {
 import {
   ArrowUpRight,
   Calendar,
-  Sparkles,
+  LineChart,
   Target,
   TrendingUp,
 } from "lucide-react";
@@ -34,6 +34,11 @@ import {
 } from "@/lib/revenue-period";
 import { cn } from "@/lib/utils";
 import { RevenuePeriodSelector } from "@/components/dashboard/revenue-period-selector";
+import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state";
+import {
+  ChartCardSkeleton,
+  ChartPlotSkeleton,
+} from "@/components/dashboard/dashboard-skeletons";
 
 function formatCurrency(val: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -129,7 +134,12 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   );
 }
 
-export function RevenueChart() {
+interface RevenueChartProps {
+  data?: RevenuePoint[];
+  isLoading?: boolean;
+}
+
+export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
   const [mounted, setMounted] = useState(false);
   const [period, setPeriod] = useState<RevenuePeriod>(DEFAULT_REVENUE_PERIOD);
 
@@ -137,7 +147,10 @@ export function RevenueChart() {
     setMounted(true);
   }, []);
 
-  const chartData = useMemo(() => getRevenueForPeriod(period), [period]);
+  const chartData = useMemo(
+    () => (data !== undefined ? data : getRevenueForPeriod(period)),
+    [data, period]
+  );
 
   const currentRevenue = chartData[chartData.length - 1]?.revenue ?? 0;
   const previousRevenue =
@@ -158,6 +171,35 @@ export function RevenueChart() {
     () => (chartData.length ? totalPeriodRevenue / chartData.length : 0),
     [chartData, totalPeriodRevenue]
   );
+
+  if (isLoading) {
+    return <ChartCardSkeleton />;
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <Card className="min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+        <CardHeader className="flex flex-col gap-4 pb-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <CardTitle className="text-xl font-bold tracking-tight">
+              Revenue Over Time
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
+              Recurring revenue trajectory and target attainment.
+            </CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <DashboardEmptyState
+            icon={LineChart}
+            title="No revenue data"
+            description="There isn't enough data to display this chart yet."
+            className="min-h-[420px] border-0"
+          />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
@@ -350,12 +392,7 @@ export function RevenueChart() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex h-full w-full items-center justify-center rounded-lg bg-muted/20">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Sparkles className="size-4 animate-spin text-emerald-500" />
-                Loading chart visualization...
-              </div>
-            </div>
+            <ChartPlotSkeleton />
           )}
         </div>
 
