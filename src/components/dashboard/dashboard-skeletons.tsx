@@ -17,7 +17,7 @@ export function StatCardsSkeleton() {
       aria-live="polite"
     >
       <ScreenReaderStatus label="Loading metrics" />
-      {Array.from({ length: 4 }).map((_, index) => (
+      {Array.from({ length: 3 }).map((_, index) => (
         <Card key={index} size="sm" className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
           <CardHeader className="gap-2 pb-1">
             <div className="flex items-center justify-between gap-2">
@@ -175,7 +175,8 @@ export function SignupsTableSkeleton() {
 
 function QuickActionsSkeleton() {
   return (
-    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs" aria-busy="true">
+    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs" aria-busy="true" aria-live="polite">
+      <ScreenReaderStatus label="Loading quick actions" />
       <CardHeader className="gap-1 pb-3">
         <Skeleton className="h-5 w-32" />
         <Skeleton className="h-4 w-64 max-w-full" />
@@ -193,7 +194,8 @@ function QuickActionsSkeleton() {
 
 export function DashboardOverviewSkeleton() {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8">
+    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8" aria-busy="true" aria-live="polite">
+      <ScreenReaderStatus label="Loading workspace overview" />
       {/* 1. Header & Page Context */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
@@ -262,7 +264,8 @@ export function DashboardOverviewSkeleton() {
 
 export function DashboardPageSkeleton() {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8">
+    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8" aria-busy="true" aria-live="polite">
+      <ScreenReaderStatus label="Loading dashboard page" />
       <div className="flex flex-col gap-3">
         <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-8 w-48 sm:h-9" />
