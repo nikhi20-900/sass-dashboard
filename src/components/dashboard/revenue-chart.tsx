@@ -83,19 +83,19 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   const diffPercent = target > 0 ? ((diff / target) * 100).toFixed(1) : null;
 
   return (
-    <div className="rounded-lg border border-border/80 bg-popover/95 p-3.5 shadow-xl backdrop-blur-md transition-all">
+    <div className="rounded-lg border border-border/80 bg-popover/95 p-3 shadow-md backdrop-blur-md transition-all">
       <div className="flex items-center gap-1.5 border-b border-border/60 pb-2 text-xs font-semibold text-foreground">
-        <Calendar className="size-3.5 text-muted-foreground" />
+        <Calendar className="size-3.5 text-muted-foreground" aria-hidden="true" />
         <span>{data.month} Trailing Period</span>
       </div>
 
-      <div className="mt-2.5 space-y-2 text-xs">
+      <div className="mt-2.5 space-y-1.5 text-xs">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-emerald-500 shadow-xs shadow-emerald-500/50" />
+            <span className="size-2 rounded-full bg-emerald-500" />
             <span className="text-muted-foreground">Revenue:</span>
           </div>
-          <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+          <span className="font-semibold tabular-nums text-foreground">
             {formatCurrency(revenue)}
           </span>
         </div>
@@ -103,10 +103,10 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
         {target > 0 && (
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-cyan-500 shadow-xs shadow-cyan-500/50" />
+              <span className="size-2 rounded-full bg-cyan-500" />
               <span className="text-muted-foreground">Target:</span>
             </div>
-            <span className="font-medium text-cyan-600 dark:text-cyan-400">
+            <span className="font-medium tabular-nums text-muted-foreground">
               {formatCurrency(target)}
             </span>
           </div>
@@ -117,7 +117,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
             <span className="text-muted-foreground">Variance:</span>
             <span
               className={cn(
-                "flex items-center font-medium",
+                "flex items-center font-medium tabular-nums",
                 diff >= 0
                   ? "text-emerald-600 dark:text-emerald-400"
                   : "text-rose-500 dark:text-rose-400"
@@ -179,12 +179,12 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
   if (chartData.length === 0) {
     return (
       <Card className="min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-        <CardHeader className="flex flex-col gap-4 pb-2 sm:flex-row sm:items-start sm:justify-between">
+        <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div>
-            <CardTitle className="text-xl font-bold tracking-tight">
+            <CardTitle className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
               Revenue Over Time
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs text-muted-foreground sm:text-sm">
               Recurring revenue trajectory and target attainment.
             </CardDescription>
           </div>
@@ -202,13 +202,13 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
   }
 
   return (
-    <Card className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-      <CardHeader className="flex flex-col gap-4 pb-2 sm:flex-row sm:items-start sm:justify-between">
+    <Card className="min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-xs">
+      <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <Badge
               variant="outline"
-              className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+              className="gap-1.5 border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
             >
               <span className="relative flex size-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
@@ -218,17 +218,17 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
             </Badge>
             <Badge
               variant="secondary"
-              className="gap-1 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-medium"
+              className="gap-1 bg-emerald-500/15 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
             >
-              <TrendingUp className="size-3" />
+              <TrendingUp className="size-3" aria-hidden="true" />
               +{momGrowth}% MoM
             </Badge>
           </div>
           <div>
-            <CardTitle className="text-xl font-bold tracking-tight">
+            <CardTitle className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
               Revenue Over Time
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs text-muted-foreground sm:text-sm">
               Recurring revenue trajectory and target attainment for {period}.
             </CardDescription>
           </div>
@@ -239,42 +239,42 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
         </CardAction>
       </CardHeader>
 
-      <CardContent className="space-y-4 pt-2">
+      <CardContent className="space-y-4 pt-1">
         {/* KPI Strip */}
-        <div className="grid grid-cols-2 gap-3 border-y border-border/50 py-3 sm:grid-cols-4">
-          <div>
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="grid grid-cols-2 gap-3 border-y border-border/60 py-3 sm:grid-cols-4 sm:gap-6">
+          <div className="min-w-0">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               Current MRR
             </span>
-            <div className="mt-0.5 text-lg font-bold text-foreground sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
               {formatCurrency(currentRevenue)}
             </div>
           </div>
-          <div>
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="min-w-0">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               Period Total
             </span>
-            <div className="mt-0.5 text-lg font-bold text-foreground sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
               {formatCurrency(totalPeriodRevenue)}
             </div>
           </div>
-          <div>
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="min-w-0">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               {period === "1Y" ? "Monthly Avg" : "Daily Avg"}
             </span>
-            <div className="mt-0.5 text-lg font-bold text-foreground sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
               {formatCurrency(averageMonthlyRevenue)}
             </div>
           </div>
-          <div>
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <div className="min-w-0">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               Target Status
             </span>
-            <div className="mt-0.5 flex items-center gap-1.5 text-lg font-bold text-emerald-600 dark:text-emerald-400 sm:text-xl">
+            <div className="mt-1 flex items-center gap-1.5 text-lg font-bold tabular-nums text-emerald-600 dark:text-emerald-400 sm:text-xl">
               <span>+2.7%</span>
               <Badge
                 variant="outline"
-                className="h-4 border-emerald-500/30 bg-emerald-500/10 px-1 text-[10px] text-emerald-600 dark:text-emerald-300"
+                className="h-4.5 border-emerald-500/30 bg-emerald-500/10 px-1.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-300"
               >
                 Above
               </Badge>
@@ -288,7 +288,7 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
-                margin={{ top: 12, right: 12, left: -16, bottom: 4 }}
+                margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
               >
                 <defs>
                   <linearGradient
@@ -298,12 +298,7 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
                     x2="0"
                     y2="1"
                   >
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop
-                      offset="50%"
-                      stopColor="#10b981"
-                      stopOpacity={0.15}
-                    />
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient
@@ -313,7 +308,7 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
                     x2="0"
                     y2="1"
                   >
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.2} />
+                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.15} />
                     <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
@@ -350,7 +345,7 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
                     stroke: "#10b981",
                     strokeWidth: 1,
                     strokeDasharray: "4 4",
-                    opacity: 0.6,
+                    opacity: 0.5,
                   }}
                 />
 
@@ -360,7 +355,7 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
                   dataKey="target"
                   name="Target"
                   stroke="#06b6d4"
-                  strokeWidth={1.75}
+                  strokeWidth={1.5}
                   strokeDasharray="4 4"
                   fill="url(#targetGradient)"
                   fillOpacity={0.5}
@@ -378,15 +373,14 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
                   dataKey="revenue"
                   name="Revenue"
                   stroke="#10b981"
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#revenueGradient)"
                   activeDot={{
-                    r: 6,
+                    r: 5,
                     fill: "#10b981",
                     stroke: "var(--background)",
                     strokeWidth: 2,
-                    className: "drop-shadow-md",
                   }}
                 />
               </AreaChart>
@@ -400,7 +394,7 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-full bg-emerald-500" />
+              <span className="size-2 rounded-full bg-emerald-500" />
               <span className="font-medium text-foreground">Actual MRR</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -409,12 +403,13 @@ export function RevenueChart({ data, isLoading = false }: RevenueChartProps) {
             </div>
           </div>
           <div className="flex items-center gap-1 text-[11px]">
-            <Target className="size-3 text-emerald-500" />
+            <Target className="size-3 text-emerald-500" aria-hidden="true" />
             <span>Updated continuously via warehouse billing sync</span>
-            <ArrowUpRight className="size-3 text-muted-foreground" />
+            <ArrowUpRight className="size-3 text-muted-foreground" aria-hidden="true" />
           </div>
         </div>
       </CardContent>
     </Card>
   );
 }
+

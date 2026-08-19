@@ -20,13 +20,15 @@ function TrendIndicator({ trend }: { trend: KPITrend }) {
   const directionLabel = isUp ? "Increased" : "Decreased";
 
   return (
-    <p className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
-      <span className="font-medium tabular-nums text-foreground">
-        <span aria-hidden="true">{isUp ? "↑" : "↓"} </span>
+    <p className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 text-xs sm:text-sm">
+      <span className="inline-flex items-center font-medium tabular-nums text-foreground">
+        <span aria-hidden="true" className={isUp ? "text-emerald-600 dark:text-emerald-400 mr-0.5" : "text-rose-600 dark:text-rose-400 mr-0.5"}>
+          {isUp ? "↑" : "↓"}
+        </span>
         <span className="sr-only">{directionLabel} by </span>
         {percent}
       </span>
-      <span className="text-muted-foreground">{trend.comparison}</span>
+      <span className="text-xs text-muted-foreground">{trend.comparison}</span>
     </p>
   );
 }
@@ -43,7 +45,7 @@ export function StatCards({ items = stats, isLoading = false }: StatCardsProps) 
 
   if (items.length === 0) {
     return (
-      <Card className="rounded-lg">
+      <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
         <CardContent className="pt-1">
           <DashboardEmptyState
             icon={BarChart3}
@@ -62,22 +64,25 @@ export function StatCards({ items = stats, isLoading = false }: StatCardsProps) 
         const Icon = stat.icon;
 
         return (
-          <Card key={stat.label} size="sm" className="min-w-0 rounded-lg">
-            <CardHeader className="gap-3">
-              <div className="flex min-w-0 items-center gap-2">
-                <Icon
-                  aria-hidden="true"
-                  className="size-4 shrink-0 text-muted-foreground"
-                />
-                <CardDescription className="truncate font-medium">
+          <Card
+            key={stat.label}
+            className="min-w-0 rounded-xl border border-border bg-card shadow-xs transition-all duration-150 hover:border-border hover:shadow-sm"
+          >
+            <CardHeader className="gap-2 pb-1">
+              <div className="flex min-w-0 items-center justify-between gap-2">
+                <CardDescription className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
                   {stat.label}
                 </CardDescription>
+                <Icon
+                  aria-hidden="true"
+                  className="size-4 shrink-0 text-muted-foreground/70"
+                />
               </div>
-              <CardTitle className="truncate text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl">
+              <CardTitle className="truncate text-2xl font-bold tracking-tight text-foreground tabular-nums sm:text-3xl">
                 {stat.value}
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <TrendIndicator trend={stat.trend} />
             </CardContent>
           </Card>

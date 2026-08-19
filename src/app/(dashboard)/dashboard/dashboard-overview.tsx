@@ -26,35 +26,83 @@ export function DashboardOverview({
   const firstName = userName.split(" ")[0];
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-6 p-4 sm:p-6">
-      <div className="grid gap-2">
-        <Badge
-          variant="outline"
-          className="w-fit gap-1 border-emerald-500/40 text-emerald-700 dark:text-emerald-300"
-        >
-          <Activity className="size-3" />
-          Live workspace
-        </Badge>
-        <div>
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Welcome back, {firstName}.
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8">
+      {/* 1. Header & Page Context */}
+      <header className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge
+            variant="outline"
+            className="gap-1.5 border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
+          >
+            <Activity className="size-3 text-emerald-600 dark:text-emerald-400" />
+            Live workspace
+          </Badge>
+          <Badge
+            variant="secondary"
+            className="px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+          >
             {getRoleLabel(userRole as Role)}
-          </p>
-          <p className="mt-2 text-muted-foreground">
+          </Badge>
+        </div>
+        <div className="space-y-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+            Welcome back, {firstName}.
+          </h1>
+          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
             Your acquisition funnel is healthy, with revenue growth ahead of active sessions.
           </p>
         </div>
-      </div>
-      <StatCards />
-      <QuickActions userRole={userRole} />
-      <RevenueChart />
-      <UserGrowthChart />
-      <RecentActivity />
-      <CustomerDistributionChart />
-      <SignupsTable />
-      <SettingsTabs user={{ name: userName, email: userEmail }} />
+      </header>
+
+      {/* 2. Workspace Overview (KPI Cards) */}
+      <section aria-label="Key Performance Indicators" className="space-y-3 sm:space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Workspace Overview
+          </h2>
+        </div>
+        <StatCards />
+      </section>
+
+      {/* 3. Primary Analytics */}
+      <section aria-label="Primary Analytics" className="space-y-4 sm:space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Analytics & Performance
+          </h2>
+        </div>
+        <div className="flex flex-col gap-6">
+          <RevenueChart />
+          <UserGrowthChart />
+        </div>
+      </section>
+
+      {/* 4. Secondary Information */}
+      <section aria-label="Secondary Information" className="space-y-4 sm:space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Audience & Signups
+          </h2>
+        </div>
+        <div className="flex flex-col gap-6">
+          <CustomerDistributionChart />
+          <SignupsTable />
+        </div>
+      </section>
+
+      {/* 5. Activity & Actions */}
+      <section aria-label="Activity and Actions" className="space-y-4 sm:space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Activity & Management
+          </h2>
+        </div>
+        <div className="flex flex-col gap-6">
+          <QuickActions userRole={userRole} />
+          <RecentActivity />
+          <SettingsTabs user={{ name: userName, email: userEmail }} />
+        </div>
+      </section>
     </div>
   );
 }

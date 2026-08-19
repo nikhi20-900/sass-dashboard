@@ -75,24 +75,24 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg border-border/80">
-      <CardHeader className="text-center pb-4">
-        <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
-        <CardDescription>
+    <Card className="w-full max-w-md rounded-xl border border-border bg-card shadow-xs sm:shadow-sm">
+      <CardHeader className="space-y-1.5 text-center pb-4 sm:pb-6">
+        <CardTitle className="text-2xl font-bold tracking-tight text-foreground">Welcome back</CardTitle>
+        <CardDescription className="text-sm text-muted-foreground">
           Sign in to your Pulse Analytics account
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Quick Demo Accounts Selection */}
-        <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+        <div className="rounded-xl border border-border bg-muted/40 p-3.5 space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
-              <Sparkles className="size-3.5 text-primary" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+              <Sparkles className="size-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
               Quick Demo Accounts
             </span>
-            <span className="text-[11px] text-muted-foreground font-mono">password123</span>
+            <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground">password123</span>
           </div>
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-3 gap-2">
             {DEMO_ACCOUNTS.map((acc) => {
               const isSelected = demoSelected === acc.role;
               return (
@@ -100,14 +100,14 @@ export function LoginForm() {
                   key={acc.role}
                   type="button"
                   onClick={() => handleFillDemo(acc)}
-                  className={`flex flex-col items-start p-2 rounded-md border text-left transition-all cursor-pointer ${
+                  className={`flex flex-col items-start p-2.5 rounded-lg border text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${
                     isSelected
-                      ? "border-primary bg-primary/10 text-foreground shadow-sm"
-                      : "border-border/60 bg-background hover:border-primary/50 hover:bg-accent/50 text-foreground"
+                      ? "border-emerald-500/80 bg-emerald-500/10 text-foreground shadow-xs ring-1 ring-emerald-500/30"
+                      : "border-border/80 bg-card hover:border-foreground/30 hover:bg-accent/50 text-foreground"
                   }`}
                 >
                   <span className="text-xs font-semibold leading-tight">{acc.role}</span>
-                  <span className="text-[10px] text-muted-foreground mt-0.5">{acc.badge}</span>
+                  <span className="mt-0.5 text-[10px] text-muted-foreground">{acc.badge}</span>
                 </button>
               );
             })}
@@ -132,13 +132,16 @@ export function LoginForm() {
           className="grid gap-4"
         >
           {state?.error ? (
-            <div className="flex items-center gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-              <AlertCircle className="size-4 shrink-0" />
-              <span>{state.error}</span>
+            <div
+              role="alert"
+              className="flex items-center gap-2.5 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
+            >
+              <AlertCircle className="size-4 shrink-0" aria-hidden="true" />
+              <span className="font-medium">{state.error}</span>
             </div>
           ) : null}
 
-          <div className="grid gap-2">
+          <div className="grid gap-1.5">
             <Label htmlFor="email" className="text-sm font-medium">
               Email Address
             </Label>
@@ -152,20 +155,20 @@ export function LoginForm() {
               {...register("email")}
             />
             {errors.email ? (
-              <p id="login-email-error" className="text-xs text-destructive flex items-center gap-1 mt-0.5">
-                <AlertCircle className="size-3 shrink-0" />
-                {errors.email.message}
+              <p id="login-email-error" role="alert" className="flex items-center gap-1.5 text-xs font-medium text-destructive pt-0.5">
+                <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+                <span>{errors.email.message}</span>
               </p>
             ) : null}
           </div>
 
-          <div className="grid gap-2">
+          <div className="grid gap-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
               <button
                 type="button"
                 onClick={() => handleFillDemo(DEMO_ACCOUNTS[0])}
-                className="text-xs text-muted-foreground hover:text-foreground transition"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus-visible:outline-none focus-visible:underline"
               >
                 Use demo admin
               </button>
@@ -184,54 +187,52 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 cursor-pointer"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  <EyeOff className="size-4" />
+                  <EyeOff className="size-4" aria-hidden="true" />
                 ) : (
-                  <Eye className="size-4" />
+                  <Eye className="size-4" aria-hidden="true" />
                 )}
               </button>
             </div>
             {errors.password ? (
-              <p id="login-password-error" className="text-xs text-destructive flex items-center gap-1 mt-0.5">
-                <AlertCircle className="size-3 shrink-0" />
-                {errors.password.message}
+              <p id="login-password-error" role="alert" className="flex items-center gap-1.5 text-xs font-medium text-destructive pt-0.5">
+                <AlertCircle className="size-3.5 shrink-0" aria-hidden="true" />
+                <span>{errors.password.message}</span>
               </p>
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between pt-1">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between pt-0.5">
+            <label htmlFor="remember" className="flex items-center gap-2 cursor-pointer select-none text-xs text-muted-foreground hover:text-foreground transition-colors">
               <input
                 type="checkbox"
                 id="remember"
                 name="remember"
                 defaultChecked
-                className="size-4 rounded border-input text-foreground focus:ring-ring"
+                className="size-4 rounded border-input text-primary focus:ring-2 focus:ring-ring/30 cursor-pointer"
               />
-              <Label htmlFor="remember" className="text-xs text-muted-foreground cursor-pointer font-normal">
-                Remember me
-              </Label>
-            </div>
-            <span className="text-xs text-muted-foreground">Demo pw: <code className="font-mono text-foreground">password123</code></span>
+              <span>Remember me</span>
+            </label>
+            <span className="text-xs text-muted-foreground">Demo pw: <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-foreground">password123</code></span>
           </div>
 
           <Button
             type="submit"
-            className="w-full font-medium shadow-sm transition-all"
+            className="h-10 w-full font-medium shadow-xs transition-all mt-1"
             disabled={isPending}
           >
             {isPending ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" />
-                Signing in...
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                <span>Signing in...</span>
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <KeyRound className="size-4" />
-                Sign in
+                <KeyRound className="size-4" aria-hidden="true" />
+                <span>Sign in</span>
               </span>
             )}
           </Button>
@@ -241,7 +242,7 @@ export function LoginForm() {
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="font-semibold text-foreground underline underline-offset-4 hover:text-primary"
+            className="font-semibold text-foreground underline underline-offset-4 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
           >
             Create account
           </Link>

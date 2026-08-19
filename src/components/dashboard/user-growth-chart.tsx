@@ -70,19 +70,19 @@ function CustomTooltip({ active, payload, series }: CustomTooltipProps) {
       : null;
 
   return (
-    <div className="rounded-lg border border-border/80 bg-popover/95 p-3.5 shadow-xl backdrop-blur-md transition-all">
+    <div className="rounded-lg border border-border/80 bg-popover/95 p-3 shadow-md backdrop-blur-md transition-all">
       <div className="flex items-center gap-1.5 border-b border-border/60 pb-2 text-xs font-semibold text-foreground">
-        <Calendar className="size-3.5 text-muted-foreground" />
+        <Calendar className="size-3.5 text-muted-foreground" aria-hidden="true" />
         <span>{data.month}</span>
       </div>
 
-      <div className="mt-2.5 space-y-2 text-xs">
+      <div className="mt-2.5 space-y-1.5 text-xs">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-emerald-500 shadow-xs shadow-emerald-500/50" />
+            <span className="size-2 rounded-full bg-emerald-500" />
             <span className="text-muted-foreground">Users:</span>
           </div>
-          <span className="font-semibold tabular-nums text-emerald-600 dark:text-emerald-400">
+          <span className="font-semibold tabular-nums text-foreground">
             {formatUsers(data.users)}
           </span>
         </div>
@@ -156,12 +156,12 @@ export function UserGrowthChart({
   if (chartData.length === 0) {
     return (
       <Card className="min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-        <CardHeader className="flex flex-col gap-4 pb-2">
+        <CardHeader className="flex flex-col gap-3 pb-3">
           <div>
-            <CardTitle className="text-xl font-bold tracking-tight">
+            <CardTitle className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
               User Growth
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs text-muted-foreground sm:text-sm">
               Cumulative registered users over time.
             </CardDescription>
           </div>
@@ -180,12 +180,12 @@ export function UserGrowthChart({
 
   return (
     <Card className="min-w-0 overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-      <CardHeader className="flex flex-col gap-4 pb-2">
+      <CardHeader className="flex flex-col gap-3 pb-3">
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <Badge
               variant="outline"
-              className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+              className="gap-1.5 border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300"
             >
               <span className="relative flex size-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -196,60 +196,60 @@ export function UserGrowthChart({
             <Badge
               variant="secondary"
               className={cn(
-                "gap-1 font-medium",
+                "gap-1 px-2.5 py-0.5 text-xs font-medium",
                 momPositive
                   ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
                   : "bg-rose-500/15 text-rose-700 dark:text-rose-300"
               )}
             >
-              <TrendingUp className="size-3" />
+              <TrendingUp className="size-3" aria-hidden="true" />
               {momPositive ? "+" : ""}
               {momGrowth}% MoM
             </Badge>
           </div>
           <div>
-            <CardTitle className="text-xl font-bold tracking-tight">
+            <CardTitle className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
               User Growth
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs text-muted-foreground sm:text-sm">
               Cumulative registered users from Aug 2025 through Jul 2026.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="min-w-0 space-y-4 pt-2">
-        <div className="grid grid-cols-2 gap-3 border-y border-border/50 py-3 sm:grid-cols-4">
+      <CardContent className="min-w-0 space-y-4 pt-1">
+        <div className="grid grid-cols-2 gap-3 border-y border-border/60 py-3 sm:grid-cols-4 sm:gap-6">
           <div className="min-w-0">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               Current users
             </span>
-            <div className="mt-0.5 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
               {formatUsers(currentUsers)}
             </div>
           </div>
           <div className="min-w-0">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               Net new
             </span>
-            <div className="mt-0.5 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
               {netNew >= 0 ? "+" : ""}
               {formatUsers(netNew)}
             </div>
           </div>
           <div className="min-w-0">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               Previous month
             </span>
-            <div className="mt-0.5 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-foreground sm:text-xl">
               {formatUsers(previousUsers)}
             </div>
           </div>
           <div className="min-w-0">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
               12-month net
             </span>
-            <div className="mt-0.5 truncate text-lg font-bold tabular-nums text-emerald-600 dark:text-emerald-400 sm:text-xl">
+            <div className="mt-1 truncate text-lg font-bold tabular-nums text-emerald-600 dark:text-emerald-400 sm:text-xl">
               {twelveMonthNet >= 0 ? "+" : ""}
               {formatUsers(twelveMonthNet)}
             </div>
@@ -261,7 +261,7 @@ export function UserGrowthChart({
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={chartData}
-                margin={{ top: 12, right: 12, left: -16, bottom: 4 }}
+                margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
               >
                 <defs>
                   <linearGradient
@@ -271,12 +271,7 @@ export function UserGrowthChart({
                     x2="0"
                     y2="1"
                   >
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop
-                      offset="50%"
-                      stopColor="#10b981"
-                      stopOpacity={0.15}
-                    />
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
@@ -314,7 +309,7 @@ export function UserGrowthChart({
                     stroke: "#10b981",
                     strokeWidth: 1,
                     strokeDasharray: "4 4",
-                    opacity: 0.6,
+                    opacity: 0.5,
                   }}
                 />
 
@@ -323,15 +318,14 @@ export function UserGrowthChart({
                   dataKey="users"
                   name="Users"
                   stroke="#10b981"
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#userGrowthGradient)"
                   activeDot={{
-                    r: 6,
+                    r: 5,
                     fill: "#10b981",
                     stroke: "var(--background)",
                     strokeWidth: 2,
-                    className: "drop-shadow-md",
                   }}
                 />
               </AreaChart>
@@ -343,11 +337,11 @@ export function UserGrowthChart({
 
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-full bg-emerald-500" />
+            <span className="size-2 rounded-full bg-emerald-500" />
             <span className="font-medium text-foreground">Registered users</span>
           </div>
           <div className="flex items-center gap-1 text-[11px]">
-            <Users className="size-3 text-emerald-500" />
+            <Users className="size-3 text-emerald-500" aria-hidden="true" />
             <span>Aligned with the Users KPI snapshot</span>
           </div>
         </div>
@@ -355,3 +349,4 @@ export function UserGrowthChart({
     </Card>
   );
 }
+

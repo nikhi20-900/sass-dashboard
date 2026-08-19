@@ -47,7 +47,7 @@ export function RevenuePeriodSelector({
       role="group"
       aria-label="Revenue period"
       onKeyDown={handleKeyDown}
-      className="flex max-w-full flex-wrap items-center rounded-lg border border-border bg-muted/40 p-0.5"
+      className="flex max-w-full flex-wrap items-center rounded-lg border border-border/80 bg-muted/40 p-0.5 shadow-xs"
     >
       {REVENUE_PERIODS.map((period) => {
         const selected = value === period;
@@ -59,10 +59,10 @@ export function RevenuePeriodSelector({
             size="sm"
             aria-pressed={selected}
             className={cn(
-              "min-h-8 min-w-10 flex-1 px-2.5 text-xs font-medium sm:flex-none",
+              "h-7 min-w-10 flex-1 px-2.5 text-xs font-medium transition-all sm:flex-none",
               selected
-                ? "bg-background text-foreground shadow-xs hover:bg-background"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-background text-foreground shadow-xs hover:bg-background/90"
+                : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
             )}
             onClick={() => onChange(period)}
           >

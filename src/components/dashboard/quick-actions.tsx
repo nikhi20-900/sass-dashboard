@@ -29,20 +29,22 @@ export function QuickActions({ userRole }: QuickActionsProps) {
   }
 
   return (
-    <Card className="rounded-lg">
-      <CardHeader className="gap-1">
-        <CardTitle>Quick actions</CardTitle>
-        <CardDescription>
+    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
+      <CardHeader className="gap-1.5 pb-2">
+        <CardTitle className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
+          Quick actions
+        </CardTitle>
+        <CardDescription className="text-xs text-muted-foreground sm:text-sm">
           Jump to common workspace and organization tasks.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-2">
         <nav aria-label="Quick actions">
           <ul
             className={
               actions.length <= 2
-                ? "grid grid-cols-1 gap-2 sm:grid-cols-2"
-                : "grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4"
+                ? "grid grid-cols-1 gap-3 sm:grid-cols-2"
+                : "grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
             }
           >
             {actions.map((action, index) => {
@@ -53,10 +55,10 @@ export function QuickActions({ userRole }: QuickActionsProps) {
                   <Button
                     asChild
                     variant={index === 0 ? "default" : "outline"}
-                    className="h-9 w-full justify-start gap-2 px-3"
+                    className="h-10 w-full justify-start gap-2.5 px-3.5 text-sm font-medium transition-all hover:translate-x-0.5 active:scale-[0.99]"
                   >
                     <Link href={action.href}>
-                      <Icon aria-hidden="true" />
+                      <Icon className="size-4 shrink-0" aria-hidden="true" />
                       <span className="truncate">{action.label}</span>
                     </Link>
                   </Button>

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireCurrentUser } from "@/lib/auth/current-user";
 import { hasAnyPermission, ADMIN_PERMISSIONS } from "@/lib/permissions/rbac";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
@@ -8,18 +8,14 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const user = await requireCurrentUser();
 
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  if (!hasAnyPermission(session.user.role, ADMIN_PERMISSIONS)) {
+  if (!hasAnyPermission(user.role, ADMIN_PERMISSIONS)) {
     redirect("/dashboard");
   }
 
   return (
-    <DashboardShell user={session.user}>
+    <DashboardShell user={user}>
       {children}
     </DashboardShell>
   );

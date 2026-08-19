@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { auth } from "@/lib/auth";
+import { requireCurrentUser } from "@/lib/auth/current-user";
 import { DashboardOverview } from "./dashboard-overview";
 
 export const metadata: Metadata = {
@@ -8,14 +8,13 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  const session = await auth();
-  const user = session?.user;
+  const user = await requireCurrentUser();
 
   return (
     <DashboardOverview
-      userName={user?.name ?? "User"}
-      userEmail={user?.email ?? ""}
-      userRole={user?.role ?? "VIEWER"}
+      userName={user.name}
+      userEmail={user.email}
+      userRole={user.role}
     />
   );
 }

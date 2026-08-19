@@ -45,11 +45,11 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
   const Icon = KIND_ICON[event.kind];
 
   return (
-    <li className="flex items-start gap-3 py-2.5 first:pt-0 last:pb-0">
-      <Avatar size="sm" className="mt-0.5">
-        <AvatarFallback>{getInitials(event.userName)}</AvatarFallback>
+    <li className="flex items-start gap-3 py-3 first:pt-1 last:pb-1">
+      <Avatar size="sm" className="mt-0.5 ring-1 ring-border/50">
+        <AvatarFallback className="text-xs font-medium">{getInitials(event.userName)}</AvatarFallback>
       </Avatar>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 space-y-1">
         <div className="flex items-baseline justify-between gap-3">
           <p className="truncate text-sm font-medium text-foreground">
             {event.userName}
@@ -62,17 +62,15 @@ function ActivityRow({ event }: { event: ActivityEvent }) {
             {formatRelativeTime(event.minutesAgo)}
           </time>
         </div>
-        <p className="mt-0.5 flex min-w-0 items-start gap-1.5 text-sm text-muted-foreground">
+        <p className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
           <Icon
             aria-hidden="true"
-            className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/80"
+            className="size-3.5 shrink-0 text-muted-foreground/80"
           />
-          <span className="min-w-0">
-            <span className="text-foreground/80">{event.action}</span>
-            <span className="hidden sm:inline"> · </span>
-            <span className="mt-0.5 block truncate sm:mt-0 sm:inline">
-              {event.context}
-            </span>
+          <span className="min-w-0 truncate">
+            <span className="font-medium text-foreground/90">{event.action}</span>
+            <span className="mx-1.5 text-muted-foreground/50">·</span>
+            <span>{event.context}</span>
           </span>
         </p>
       </div>
@@ -108,14 +106,16 @@ export function RecentActivity({
   }
 
   return (
-    <Card className="rounded-lg">
-      <CardHeader className="gap-1">
-        <CardTitle>Recent activity</CardTitle>
-        <CardDescription>
+    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
+      <CardHeader className="gap-1.5 pb-2">
+        <CardTitle className="text-lg font-bold tracking-tight text-foreground sm:text-xl">
+          Recent activity
+        </CardTitle>
+        <CardDescription className="text-xs text-muted-foreground sm:text-sm">
           Latest actions across this workspace.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-1">
         {feed.length === 0 ? (
           <EmptyActivity />
         ) : (

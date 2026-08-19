@@ -18,16 +18,16 @@ export function StatCardsSkeleton() {
     >
       <ScreenReaderStatus label="Loading metrics" />
       {Array.from({ length: 4 }).map((_, index) => (
-        <Card key={index} size="sm" className="min-w-0 rounded-lg">
-          <CardHeader className="gap-3">
-            <div className="flex items-center gap-2">
+        <Card key={index} size="sm" className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
+          <CardHeader className="gap-2 pb-1">
+            <div className="flex items-center justify-between gap-2">
+              <Skeleton className="h-3.5 w-24" />
               <Skeleton className="size-4 shrink-0 rounded-sm" />
-              <Skeleton className="h-4 w-24" />
             </div>
             <Skeleton className="h-8 w-28 sm:h-9" />
           </CardHeader>
-          <CardContent>
-            <Skeleton className="h-5 w-40" />
+          <CardContent className="pt-0">
+            <Skeleton className="h-4 w-36" />
           </CardContent>
         </Card>
       ))}
@@ -83,7 +83,7 @@ export function ChartCardSkeleton() {
       </CardHeader>
       <CardContent className="min-w-0 pt-2">
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-3 border-y border-border/50 py-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 border-y border-border/60 py-3 sm:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className="min-w-0">
                 <Skeleton className="h-3 w-20" />
@@ -106,9 +106,9 @@ export function ChartCardSkeleton() {
 
 export function RecentActivitySkeleton() {
   return (
-    <Card className="rounded-lg" aria-busy="true" aria-live="polite">
+    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs" aria-busy="true" aria-live="polite">
       <ScreenReaderStatus label="Loading recent activity" />
-      <CardHeader className="gap-1">
+      <CardHeader className="gap-1 pb-3">
         <Skeleton className="h-5 w-36" />
         <Skeleton className="h-4 w-56" />
       </CardHeader>
@@ -137,33 +137,34 @@ export function RecentActivitySkeleton() {
 
 export function SignupsTableSkeleton() {
   return (
-    <Card className="rounded-lg" aria-busy="true" aria-live="polite">
+    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs" aria-busy="true" aria-live="polite">
       <ScreenReaderStatus label="Loading recent signups" />
-      <CardHeader className="gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-col gap-2">
-          <Skeleton className="h-5 w-36" />
+      <CardHeader className="flex flex-col gap-4 pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <Skeleton className="h-6 w-36" />
           <Skeleton className="h-4 w-64 max-w-full" />
         </div>
-        <Skeleton className="h-8 w-full md:w-80" />
+        <Skeleton className="h-9 w-full sm:w-72 md:w-80 rounded-lg" />
       </CardHeader>
-      <CardContent className="overflow-x-auto">
-        <div className="flex min-w-[640px] flex-col gap-3">
-          <div className="flex gap-4 border-b border-border pb-2">
+      <CardContent className="overflow-x-auto pt-0">
+        <div className="flex min-w-[640px] flex-col">
+          <div className="flex gap-4 border-b border-border/70 bg-muted/30 px-4 py-2.5">
             {Array.from({ length: 6 }).map((_, index) => (
               <Skeleton key={index} className="h-4 flex-1" />
             ))}
           </div>
           {Array.from({ length: 8 }).map((_, row) => (
-            <div key={row} className="flex items-center gap-4 py-1">
-              <div className="flex flex-1 flex-col gap-1">
+            <div key={row} className="flex items-center gap-4 border-b border-border/50 px-4 py-3">
+              <div className="flex flex-1 flex-col gap-1.5">
                 <Skeleton className="h-4 w-28" />
                 <Skeleton className="h-3 w-36" />
               </div>
               <Skeleton className="h-4 flex-1" />
               <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-5 w-14 rounded-full" />
+              <Skeleton className="h-5 w-16 rounded-md" />
               <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-14" />
+              <Skeleton className="size-8 shrink-0 rounded-md" />
             </div>
           ))}
         </div>
@@ -174,8 +175,8 @@ export function SignupsTableSkeleton() {
 
 function QuickActionsSkeleton() {
   return (
-    <Card className="rounded-lg" aria-busy="true">
-      <CardHeader className="gap-1">
+    <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs" aria-busy="true">
+      <CardHeader className="gap-1 pb-3">
         <Skeleton className="h-5 w-32" />
         <Skeleton className="h-4 w-64 max-w-full" />
       </CardHeader>
@@ -192,32 +193,82 @@ function QuickActionsSkeleton() {
 
 export function DashboardOverviewSkeleton() {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-6 p-4 sm:p-6">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-5 w-28 rounded-full" />
-        <Skeleton className="h-8 w-64 max-w-full sm:h-9" />
-        <Skeleton className="h-4 w-40" />
-        <Skeleton className="h-4 w-full max-w-xl" />
+    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8">
+      {/* 1. Header & Page Context */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-5 w-28 rounded-full" />
+          <Skeleton className="h-5 w-20 rounded-full" />
+        </div>
+        <div className="space-y-1.5">
+          <Skeleton className="h-8 w-64 max-w-full sm:h-9" />
+          <Skeleton className="h-4 w-full max-w-xl" />
+        </div>
       </div>
-      <StatCardsSkeleton />
-      <QuickActionsSkeleton />
-      <ChartCardSkeleton />
-      <ChartCardSkeleton />
-      <RecentActivitySkeleton />
-      <SignupsTableSkeleton />
+
+      {/* 2. Workspace Overview */}
+      <div className="space-y-3 sm:space-y-4">
+        <Skeleton className="h-3.5 w-36" />
+        <StatCardsSkeleton />
+      </div>
+
+      {/* 3. Primary Analytics */}
+      <div className="space-y-4 sm:space-y-6">
+        <Skeleton className="h-3.5 w-44" />
+        <div className="flex flex-col gap-6">
+          <ChartCardSkeleton />
+          <ChartCardSkeleton />
+        </div>
+      </div>
+
+      {/* 4. Secondary Information */}
+      <div className="space-y-4 sm:space-y-6">
+        <Skeleton className="h-3.5 w-36" />
+        <div className="flex flex-col gap-6">
+          <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
+            <CardHeader className="gap-1.5 pb-2">
+              <Skeleton className="h-5 w-44" />
+              <Skeleton className="h-4 w-64" />
+            </CardHeader>
+            <CardContent className="pt-2">
+              <Skeleton className="h-48 w-full" />
+            </CardContent>
+          </Card>
+          <SignupsTableSkeleton />
+        </div>
+      </div>
+
+      {/* 5. Activity & Actions */}
+      <div className="space-y-4 sm:space-y-6">
+        <Skeleton className="h-3.5 w-40" />
+        <div className="flex flex-col gap-6">
+          <QuickActionsSkeleton />
+          <RecentActivitySkeleton />
+          <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
+            <CardHeader className="gap-1.5 pb-2">
+              <Skeleton className="h-5 w-28" />
+              <Skeleton className="h-4 w-56" />
+              <Skeleton className="mt-3 h-8 w-52" />
+            </CardHeader>
+            <CardContent className="pt-2">
+              <Skeleton className="h-36 w-full max-w-xl" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
 
 export function DashboardPageSkeleton() {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-6 p-4 sm:p-6">
-      <div className="flex flex-col gap-2">
+    <div className="flex min-w-0 flex-1 flex-col gap-8 p-4 sm:p-6 lg:p-8">
+      <div className="flex flex-col gap-3">
         <Skeleton className="h-5 w-24 rounded-full" />
         <Skeleton className="h-8 w-48 sm:h-9" />
         <Skeleton className="h-4 w-full max-w-md" />
       </div>
-      <Card className="rounded-lg">
+      <Card className="min-w-0 rounded-xl border border-border bg-card shadow-xs">
         <CardHeader className="gap-2">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-4 w-full max-w-lg" />

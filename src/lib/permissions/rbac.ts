@@ -7,6 +7,11 @@ export const Role = {
 
 export type Role = (typeof Role)[keyof typeof Role];
 
+/** Returns whether an untrusted persisted or token value is a supported role. */
+export function isRole(value: unknown): value is Role {
+  return typeof value === "string" && Object.values(Role).includes(value as Role);
+}
+
 /**
  * Permissions represent granular access controls.
  * Every route, nav item, and page guard references these values.
@@ -16,6 +21,7 @@ export enum Permission {
   ANALYTICS_VIEW = "analytics:view",
   CUSTOMERS_VIEW = "customers:view",
   REPORTS_VIEW = "reports:view",
+  REPORTS_EXPORT = "reports:export",
   USERS_MANAGE = "users:manage",
   BILLING_MANAGE = "billing:manage",
   ORG_SETTINGS_MANAGE = "org_settings:manage",
@@ -24,7 +30,8 @@ export enum Permission {
 /**
  * Role → Permission mapping.
  * SUPER_ADMIN and ORG_ADMIN have all permissions.
- * MANAGER and VIEWER have workspace-level read permissions.
+ * MANAGER has workspace read + reports export.
+ * VIEWER has workspace-level read permissions only.
  */
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   SUPER_ADMIN: [
@@ -32,6 +39,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.ANALYTICS_VIEW,
     Permission.CUSTOMERS_VIEW,
     Permission.REPORTS_VIEW,
+    Permission.REPORTS_EXPORT,
     Permission.USERS_MANAGE,
     Permission.BILLING_MANAGE,
     Permission.ORG_SETTINGS_MANAGE,
@@ -41,6 +49,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.ANALYTICS_VIEW,
     Permission.CUSTOMERS_VIEW,
     Permission.REPORTS_VIEW,
+    Permission.REPORTS_EXPORT,
     Permission.USERS_MANAGE,
     Permission.BILLING_MANAGE,
     Permission.ORG_SETTINGS_MANAGE,
@@ -50,6 +59,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.ANALYTICS_VIEW,
     Permission.CUSTOMERS_VIEW,
     Permission.REPORTS_VIEW,
+    Permission.REPORTS_EXPORT,
   ],
   VIEWER: [
     Permission.DASHBOARD_VIEW,

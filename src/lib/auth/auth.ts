@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { authConfig } from "@/lib/auth/auth.config";
 import { loginSchema } from "@/lib/validators/auth";
 
-import type { Role } from "@/lib/permissions/rbac";
+import { isRole } from "@/lib/permissions/rbac";
 
 /**
  * Full auth configuration with Prisma + bcryptjs.
@@ -30,7 +30,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             where: { email, deletedAt: null },
           });
 
-          if (!user) return null;
+          if (!user || !isRole(user.role)) return null;
 
           const passwordMatch = await bcryptjs.compare(
             password,
@@ -43,7 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             id: user.id,
             name: user.name,
             email: user.email,
-            role: (user.role as Role) || "VIEWER",
+            role: user.role,
             organizationId: user.organizationId,
             workspaceId: user.workspaceId,
           };
